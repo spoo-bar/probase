@@ -1,0 +1,53 @@
+{
+    "name": "probase",
+    "displayName": "ProBase",
+    "description": "Provides Intellisense and database tools for ProArc database",
+    "version": "0.0.1",
+    "publisher": "spoorthi",
+    "engines": {
+        "vscode": "^1.33.0",
+        "sqlops": "*"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onCommand:extension.showCurrentConnection"
+    ],
+    "main": "./out/extension",
+    "contributes": {
+        "commands": [
+            {
+                "command": "extension.showCurrentConnection",
+                "title": "Show Current Connection"
+            }
+        ],
+        "configuration": [
+            {
+                "title": "ProBase",
+                "properties": {
+                    "code.dbscriptsFolderPath": {
+                        "type": "string",
+                        "description": "The path to DbScripts repository",
+                        "scope": "application"
+                    }
+                }
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install && node ./node_modules/sqlops/bin/install",
+        "test": "npm run compile && node ./node_modules/vscode/bin/test"
+    },
+    "devDependencies": {
+        "typescript": "^2.6.1",
+        "vscode": "^1.1.6",
+        "sqlops": "github:anthonydresser/sqlops-extension-sqlops",
+        "tslint": "^5.8.0",
+        "@types/node": "^7.0.43",
+        "@types/mocha": "^2.2.42"
+    }
+}
