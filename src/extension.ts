@@ -8,10 +8,14 @@ import * as vscode from 'vscode';
 // Import the module and reference it with the alias sqlops in your code below
 
 import * as sqlops from 'sqlops';
+import ProBaseDefinitionProvider from './features/proBaseDefinitionProvider';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+
+    //Enables Go to Definition and Peek Definition
+    context.subscriptions.push(vscode.languages.registerDefinitionProvider({ language: "sql"}, new ProBaseDefinitionProvider()))
 
     context.subscriptions.push(vscode.commands.registerCommand('extension.showCurrentConnection', () => {
         // The code you place here will be executed every time your command is executed

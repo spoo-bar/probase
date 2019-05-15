@@ -12,6 +12,7 @@
         "Other"
     ],
     "activationEvents": [
+        "onLanguage:sql",
         "onCommand:extension.showCurrentConnection"
     ],
     "main": "./out/extension",
@@ -28,6 +29,7 @@
                 "properties": {
                     "code.dbscriptsFolderPath": {
                         "type": "string",
+                        "default": "C:\\Code\\Git\\DBScript",
                         "description": "The path to DbScripts repository",
                         "scope": "application"
                     }
@@ -43,11 +45,15 @@
         "test": "npm run compile && node ./node_modules/vscode/bin/test"
     },
     "devDependencies": {
-        "typescript": "^2.6.1",
-        "vscode": "^1.1.6",
+        "@types/mocha": "^2.2.42",
+        "@types/node": "^7.10.6",
         "sqlops": "github:anthonydresser/sqlops-extension-sqlops",
         "tslint": "^5.8.0",
-        "@types/node": "^7.0.43",
-        "@types/mocha": "^2.2.42"
+        "typescript": "^2.6.1",
+        "vscode": "^1.1.6"
+    },
+    "dependencies": {
+        "fs": "0.0.1-security",
+        "path": "^0.12.7"
     }
 }
