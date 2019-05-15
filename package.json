@@ -32,6 +32,16 @@
                         "default": "C:\\Code\\Git\\DBScript",
                         "description": "The path to DbScripts repository",
                         "scope": "application"
+                    },
+                    "code.sqlSource": {
+                        "type": "string",
+                        "enum": [
+                            "MS SQL",
+                            "Oracle"
+                        ],
+                        "default": "MS SQL",
+                        "description": "SQL source to fetch data for intellisense and other tools",
+                        "scope": "application"
                     }
                 }
             }

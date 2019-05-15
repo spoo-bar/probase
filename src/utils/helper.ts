@@ -21,7 +21,7 @@ export default class Helper {
     public static GetTablesFolderPath() : string {
         if(Helper.IsRepositorySetup()) {
             if(fs.existsSync(Helper.GetDbScriptsPath())) {
-                var tablesFolder = path.join(Helper.GetDbScriptsPath(), "Source", "LATEST_INSTALL", "mssql_source", "tables");
+                var tablesFolder = path.join(Helper.GetDbScriptsPath(), "Source", "LATEST_INSTALL", this.GetSQLFolder(), "tables");
                 if(fs.existsSync(tablesFolder)) {
                     return tablesFolder;
                 }
@@ -37,4 +37,26 @@ export default class Helper {
             throw new ProBaseError("RepositoryNotSetup", "DbScripts Repository path not setup in File > Preferences > Settings");
         }
     }
+
+    private static GetSQLFolder(): string {
+        var sqlSource = this.GetSqlSource();
+        switch(sqlSource) {
+            case SQLSource.MSSQL : return "mssql_source";
+            case SQLSource.Oracle :  return "oracle_source";
+            default : throw new ProBaseError("SqlSourceInvalid", sqlSource + " is not a valid Sql Source value.");
+        }
+    }
+
+    private static GetSqlSource() : SQLSource {
+        var sqlSourceValue = vscode.workspace.getConfiguration().get("code.sqlSource") as string;
+        if(sqlSourceValue === "MS SQL")
+            return SQLSource.MSSQL;
+        else
+            return SQLSource.Oracle;
+    }
+}
+
+enum SQLSource {
+    MSSQL,
+    Oracle
 }
