@@ -15,13 +15,13 @@ import Helper from './utils/helper';
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-   
+
 
     //Enables Go to Definition and Peek Definition
-    context.subscriptions.push(vscode.languages.registerDefinitionProvider({ language: "sql"}, new ProBaseDefinitionProvider()))
+    context.subscriptions.push(vscode.languages.registerDefinitionProvider({ language: "sql" }, new ProBaseDefinitionProvider()))
 
     //Enables intellisense on hover
-    context.subscriptions.push(vscode.languages.registerHoverProvider({language: "sql"}, new ProBaseHoverProvider(context.globalState)))
+    context.subscriptions.push(vscode.languages.registerHoverProvider({ language: "sql" }, new ProBaseHoverProvider(context.globalState)))
 
     //Updates documentation
     context.subscriptions.push(vscode.commands.registerCommand('extension.updateDocumentation', () => {
@@ -36,7 +36,7 @@ export function activate(context: vscode.ExtensionContext) {
             let connectionId = connection ? connection.connectionId : 'No connection found!';
             vscode.window.showInformationMessage(connectionId);
         }, error => {
-             console.info(error);
+            console.info(error);
         });
     }));
 
