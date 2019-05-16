@@ -2,27 +2,28 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import ProBaseError from './probaseError';
+import Table from './table';
 
 export default class Helper {
 
-    public static GetDbScriptsPath() : string {
+    public static GetDbScriptsPath(): string {
         return vscode.workspace.getConfiguration().get("code.dbscriptsFolderPath") as string;
     }
 
     public static IsRepositorySetup(): boolean {
         var dbScriptRepoFolder = this.GetDbScriptsPath();
-        if(!dbScriptRepoFolder)
+        if (!dbScriptRepoFolder)
             return false;
         else if (dbScriptRepoFolder === "")
             return false;
         return true;
     }
 
-    public static GetTablesFolderPath() : string {
-        if(Helper.IsRepositorySetup()) {
-            if(fs.existsSync(Helper.GetDbScriptsPath())) {
+    public static GetTablesFolderPath(): string {
+        if (Helper.IsRepositorySetup()) {
+            if (fs.existsSync(Helper.GetDbScriptsPath())) {
                 var tablesFolder = path.join(Helper.GetDbScriptsPath(), "Source", "LATEST_INSTALL", this.GetSQLFolder(), "tables");
-                if(fs.existsSync(tablesFolder)) {
+                if (fs.existsSync(tablesFolder)) {
                     return tablesFolder;
                 }
                 else {
@@ -38,18 +39,35 @@ export default class Helper {
         }
     }
 
-    private static GetSQLFolder(): string {
-        var sqlSource = this.GetSqlSource();
-        switch(sqlSource) {
-            case SQLSource.MSSQL : return "mssql_source";
-            case SQLSource.Oracle :  return "oracle_source";
-            default : throw new ProBaseError("SqlSourceInvalid", sqlSource + " is not a valid Sql Source value.");
+    public static LoadDocumentation(state: vscode.Memento): void {
+
+        if (this.IsRepositorySetup()) {
+            var documentationFilePath = path.join(this.GetDbScriptsPath(), "Source", "documentation.json");
+            fs.readFile(documentationFilePath, "utf-8", function (err, content) {
+
+                if (err)
+                    throw new ProBaseError(err.name, err.message);
+
+                JSON.parse(content).forEach((element: any) => {
+                    var table: Table = Object.assign(new Table(), element);
+                    state.update(table.Name.toLowerCase(), table);
+                });
+            });
         }
     }
 
-    private static GetSqlSource() : SQLSource {
+    private static GetSQLFolder(): string {
+        var sqlSource = this.GetSqlSource();
+        switch (sqlSource) {
+            case SQLSource.MSSQL: return "mssql_source";
+            case SQLSource.Oracle: return "oracle_source";
+            default: throw new ProBaseError("SqlSourceInvalid", sqlSource + " is not a valid Sql Source value.");
+        }
+    }
+
+    private static GetSqlSource(): SQLSource {
         var sqlSourceValue = vscode.workspace.getConfiguration().get("code.sqlSource") as string;
-        if(sqlSourceValue === "MS SQL")
+        if (sqlSourceValue === "MS SQL")
             return SQLSource.MSSQL;
         else
             return SQLSource.Oracle;

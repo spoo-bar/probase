@@ -13,7 +13,8 @@
     ],
     "activationEvents": [
         "onLanguage:sql",
-        "onCommand:extension.showCurrentConnection"
+        "onCommand:extension.showCurrentConnection",
+        "onCommand:extension.updateDocumentation"
     ],
     "main": "./out/extension",
     "contributes": {
@@ -21,6 +22,10 @@
             {
                 "command": "extension.showCurrentConnection",
                 "title": "Show Current Connection"
+            },
+            {
+                "command": "extension.updateDocumentation",
+                "title": "Update ProArc DB tables documentation"
             }
         ],
         "configuration": [

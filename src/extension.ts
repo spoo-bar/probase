@@ -9,13 +9,24 @@ import * as vscode from 'vscode';
 
 import * as sqlops from 'sqlops';
 import ProBaseDefinitionProvider from './features/proBaseDefinitionProvider';
+import ProBaseHoverProvider from './features/proBaseHoverProvider';
+import Helper from './utils/helper';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+   
 
     //Enables Go to Definition and Peek Definition
     context.subscriptions.push(vscode.languages.registerDefinitionProvider({ language: "sql"}, new ProBaseDefinitionProvider()))
+
+    //Enables intellisense on hover
+    context.subscriptions.push(vscode.languages.registerHoverProvider({language: "sql"}, new ProBaseHoverProvider(context.globalState)))
+
+    //Updates documentation
+    context.subscriptions.push(vscode.commands.registerCommand('extension.updateDocumentation', () => {
+        Helper.LoadDocumentation(context.globalState);
+    }));
 
     context.subscriptions.push(vscode.commands.registerCommand('extension.showCurrentConnection', () => {
         // The code you place here will be executed every time your command is executed
@@ -28,6 +39,8 @@ export function activate(context: vscode.ExtensionContext) {
              console.info(error);
         });
     }));
+
+    vscode.commands.executeCommand('extension.updateDocumentation');
 }
 
 // this method is called when your extension is deactivated
