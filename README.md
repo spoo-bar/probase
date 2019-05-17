@@ -1,5 +1,7 @@
 # ProBase
 
+[![Build Status](https://spoon611.visualstudio.com/ProBase/_apis/build/status/spoon611.probase?branchName=master)](https://spoon611.visualstudio.com/ProBase/_build/latest?definitionId=4&branchName=master)
+
 This extension is meant to help database code management for ProArc
 
 ## Features
