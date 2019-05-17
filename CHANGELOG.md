@@ -6,4 +6,5 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## 1.0.0
 ### Added
 - Support for Go to Definition and Peek Definition
-- SUpport for intellisense on hover
+- Support for intellisense on hover
+- Support to replace SQL parameters from Traceview log

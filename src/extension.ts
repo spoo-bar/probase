@@ -11,6 +11,7 @@ import * as sqlops from 'sqlops';
 import ProBaseDefinitionProvider from './features/proBaseDefinitionProvider';
 import ProBaseHoverProvider from './features/proBaseHoverProvider';
 import Helper from './utils/helper';
+import ProBaseSQLHelper from './features/proBaseSQLHelper';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -28,6 +29,12 @@ export function activate(context: vscode.ExtensionContext) {
         Helper.LoadDocumentation(context.globalState);
     }));
 
+    //Replaces SQL Parameter values
+    createStatusBarItems();
+    context.subscriptions.push(vscode.commands.registerCommand('extension.replaceSQLParameters', () => {
+        ProBaseSQLHelper.replaceParameters();
+    }));
+
     context.subscriptions.push(vscode.commands.registerCommand('extension.showCurrentConnection', () => {
         // The code you place here will be executed every time your command is executed
 
@@ -40,7 +47,17 @@ export function activate(context: vscode.ExtensionContext) {
         });
     }));
 
-    vscode.commands.executeCommand('extension.updateDocumentation');
+    if (!context.globalState.get(Helper.IsDocumentationLoaded)) {
+        Helper.LoadDocumentation(context.globalState);
+    }
+}
+
+function createStatusBarItems() {
+    var replaceParametersStatusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+    replaceParametersStatusItem.text = "$(beaker) Replace Parameters";
+    replaceParametersStatusItem.tooltip = "Replace parameters in SQL";
+    replaceParametersStatusItem.command = "extension.replaceSQLParameters";
+    replaceParametersStatusItem.show();
 }
 
 // this method is called when your extension is deactivated

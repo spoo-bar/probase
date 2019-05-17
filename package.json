@@ -1,7 +1,7 @@
 {
     "name": "probase",
     "displayName": "ProBase",
-    "description": "Provides Intellisense and database tools for ProArc database",
+    "description": "Provides Intellisense and database table tools for ProArc database",
     "version": "1.0.0",
     "publisher": "spoorthi",
     "engines": {
@@ -14,6 +14,10 @@
     "keywords": [
         "ProArc"
     ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/spoon611/probase.git"
+    },
     "activationEvents": [
         "onLanguage:sql",
         "onCommand:extension.showCurrentConnection",
@@ -29,6 +33,10 @@
             {
                 "command": "extension.updateDocumentation",
                 "title": "Update ProArc DB tables documentation"
+            },
+            {
+                "command": "extension.replaceSQLParameters",
+                "title": "Replace SQL Parameter values"
             }
         ],
         "configuration": [
@@ -37,7 +45,6 @@
                 "properties": {
                     "code.dbscriptsFolderPath": {
                         "type": "string",
-                        "default": "C:\\Code\\Git\\DBScript",
                         "description": "The path to DbScripts repository",
                         "scope": "application"
                     },

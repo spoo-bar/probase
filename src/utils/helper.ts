@@ -6,6 +6,8 @@ import Table from './table';
 
 export default class Helper {
 
+    public static IsDocumentationLoaded : string = "IsDocumentationLoaded";
+
     public static GetDbScriptsPath(): string {
         return vscode.workspace.getConfiguration().get("code.dbscriptsFolderPath") as string;
     }
@@ -42,12 +44,13 @@ export default class Helper {
     public static LoadDocumentation(state: vscode.Memento): void {
 
         if (this.IsRepositorySetup()) {
-            var documentationFilePath = path.join(this.GetDbScriptsPath(), "Source", "documentation.json");
+            var documentationFilePath = path.join(this.GetDbScriptsPath(), "documentation.json");
             fs.readFile(documentationFilePath, "utf-8", function (err, content) {
 
                 if (err)
                     throw new ProBaseError(err.name, err.message);
 
+                state.update(Helper.IsDocumentationLoaded, true);
                 JSON.parse(content).forEach((element: any) => {
                     var table: Table = Object.assign(new Table(), element);
                     state.update(table.Name.toLowerCase(), table);

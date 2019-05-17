@@ -51,7 +51,7 @@ export default class ProBaseHoverProvider implements vscode.HoverProvider {
     }
 
     private buildTableIntellisense(table: Table) {
-        var tableDetails = `### ${table.Name}`;
+        var tableDetails = `### ${table.Name.toUpperCase()}`;
         if (table.Description) {
             tableDetails += ` - ${table.Description}`;
         }
