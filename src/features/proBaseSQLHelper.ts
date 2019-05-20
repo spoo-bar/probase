@@ -61,7 +61,7 @@ export default class ProBaseSQLHelper {
     }
 
     private static isNumber(param: SQLParameter): boolean {
-        return /^\d+$/.test(param.Value);
+        return /^-?\d+$/.test(param.Value);
     }
 }
 

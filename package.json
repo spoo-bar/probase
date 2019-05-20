@@ -2,7 +2,7 @@
     "name": "probase",
     "displayName": "ProBase",
     "description": "Provides Intellisense and database table tools for ProArc database",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "publisher": "spoorthi",
     "engines": {
         "vscode": "^1.33.0",
