@@ -12,6 +12,7 @@ import ProBaseDefinitionProvider from './features/proBaseDefinitionProvider';
 import ProBaseHoverProvider from './features/proBaseHoverProvider';
 import Helper from './utils/helper';
 import ProBaseSQLHelper from './features/proBaseSQLHelper';
+import ProBaseLogProvider from './features/proBaseLogProvider';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -33,6 +34,10 @@ export function activate(context: vscode.ExtensionContext) {
     createStatusBarItems();
     context.subscriptions.push(vscode.commands.registerCommand('extension.replaceSQLParameters', () => {
         ProBaseSQLHelper.replaceParameters();
+    }));
+
+    context.subscriptions.push(vscode.commands.registerCommand('extension.openSQLLogViewer', () => {
+        var logHelper = new ProBaseLogProvider(context);
     }));
 
     context.subscriptions.push(vscode.commands.registerCommand('extension.showCurrentConnection', () => {
@@ -58,6 +63,12 @@ function createStatusBarItems() {
     replaceParametersStatusItem.tooltip = "Replace parameters in SQL";
     replaceParametersStatusItem.command = "extension.replaceSQLParameters";
     replaceParametersStatusItem.show();
+
+    var openLogViewerStatusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+    openLogViewerStatusItem.text = "$(clippy) Open SQL Log Viewer";
+    openLogViewerStatusItem.tooltip = "Open SQL Log Viewer";
+    openLogViewerStatusItem.command = "extension.openSQLLogViewer";
+    openLogViewerStatusItem.show();
 }
 
 // this method is called when your extension is deactivated

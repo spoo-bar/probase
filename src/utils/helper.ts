@@ -59,6 +59,10 @@ export default class Helper {
         }
     }
 
+    public static GetSQLLogPath() : string {
+        return vscode.workspace.getConfiguration().get("code.sqlLogPath") as string;
+    }
+
     private static GetSQLFolder(): string {
         var sqlSource = this.GetSqlSource();
         switch (sqlSource) {

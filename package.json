@@ -37,6 +37,10 @@
             {
                 "command": "extension.replaceSQLParameters",
                 "title": "Replace SQL Parameter values"
+            },
+            {
+                "command": "extension.openSQLLogViewer",
+                "title": "Open SQL Log Viewer"
             }
         ],
         "configuration": [
@@ -57,6 +61,12 @@
                         "default": "MS SQL",
                         "description": "SQL source to fetch data for intellisense and other tools",
                         "scope": "application"
+                    },
+                    "code.sqlLogPath": {
+                        "type": "string",
+                        "description": "The path to SQL Log JSON file",
+                        "scope": "application",
+                        "default": "C:\\Program Files (x86)\\Software Innovation\\TraceView\\sqllog.json"
                     }
                 }
             }
