@@ -38,6 +38,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(vscode.commands.registerCommand('extension.openSQLLogViewer', () => {
         var logHelper = new ProBaseLogProvider(context);
+        logHelper.ShowLog();
     }));
 
     context.subscriptions.push(vscode.commands.registerCommand('extension.showCurrentConnection', () => {

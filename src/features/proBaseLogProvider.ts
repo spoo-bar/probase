@@ -6,9 +6,11 @@ import ProBaseError from '../utils/probaseError';
 export default class ProBaseLogProvider {
 
     LogPanel : vscode.WebviewPanel | undefined = undefined;
-    LogInterval : NodeJS.Timer = setInterval(this.updateTraceLog, 1000);
+    LogInterval : NodeJS.Timer = setInterval(() => this.updateTraceLog(this.LogPanel), 1000000);
+    State : vscode.Memento;
 
     constructor(context : vscode.ExtensionContext) {
+        this.State = context.workspaceState;
         if(this.LogPanel) {
             this.LogPanel.reveal(vscode.ViewColumn.Beside);
         }
@@ -18,22 +20,44 @@ export default class ProBaseLogProvider {
         }        
     }
 
-    private updateTraceLog() {
-        var logPath = Helper.GetSQLLogPath();
+    public ShowLog() {
+        this.updateTraceLog(this.LogPanel);
+    }
+
+    private updateTraceLog(logPanel : vscode.WebviewPanel | undefined) {
+        let logPath = Helper.GetSQLLogPath();
         fs.readFile(logPath, "utf-8", function (err, content) {
             if (err)
                 throw new ProBaseError(err.name, err.message);
 
-            let logs : Log[] = [];
-            JSON.parse(content).forEach((element: any) => {
-                var log: Log = Object.assign(new Log(), element);
-                logs.push(log);
+            let details : string = '';
+            let logs : [] = JSON.parse(content);
+            logs.forEach((element: any, index: Number) => {
+                let log: Log = Object.assign(new Log(), element);
+                details += '<p>' + log.Message + '</p>';
+
+                if(index  === logs.length - 1) {
+                    let html = `<!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Cat Coding</title>
+                    </head>
+                    <body>
+                        ${details}
+                    </body>
+                    </html>`;
+                    logPanel!.webview.html = html;
+                }
             });
         });
     }
+
 }
 
 class Log {
+    GUID !: string;
     User !: string;
     PID !: string;
     SubSystem !: string;
