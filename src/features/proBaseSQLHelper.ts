@@ -20,7 +20,7 @@ export default class ProBaseSQLHelper {
                 }
 
                 currentTextEditor.edit((editBuilder) => {
-                    editBuilder.replace(documentRange, newText); // Replacing editor text
+                    editBuilder.replace(documentRange, newText.trim()); // Replacing editor text
                 });
             }
         }

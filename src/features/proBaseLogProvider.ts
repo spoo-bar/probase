@@ -2,6 +2,7 @@ import * as vscode from 'vscode'
 import * as fs from 'fs';
 import Helper from '../utils/helper';
 import ProBaseError from '../utils/probaseError';
+import ProBaseSQLHelper from './proBaseSQLHelper';
 
 export default class ProBaseLogProvider {
 
@@ -18,9 +19,10 @@ export default class ProBaseLogProvider {
             this.LogPanel = vscode.window.createWebviewPanel('log', 'SQL Log', vscode.ViewColumn.Beside, {enableScripts: true});
             this.LogPanel.onDidDispose(() => { clearInterval(this.LogInterval); }, null, context.subscriptions);     
             this.LogPanel!.webview.onDidReceiveMessage(message => {
-                vscode.window.showErrorMessage(message);
                 vscode.workspace.openTextDocument({language: 'sql', content: message}).then(newDocument => {
-                    vscode.window.showTextDocument(newDocument, vscode.ViewColumn.Beside);
+                    vscode.window.showTextDocument(newDocument, vscode.ViewColumn.Beside).then(() => {
+                        ProBaseSQLHelper.replaceParameters();
+                    });                    
                 });
             }, undefined, context.subscriptions);       
         }        
@@ -55,16 +57,29 @@ export default class ProBaseLogProvider {
                     var playIconLink = document.createElement('a');
                     playIconLink.href = '#';
                     playIconLink.addEventListener("click", function (evt) {
-                        console.log(evt);
-                        var id = evt.target.id;
                         vscode.postMessage(evt.target.getAttribute('data-message'));
                     });
                     var playIcon = document.createElement('i');
                     playIcon.className += 'icon fa fa-play';
-                    playIcon.style.color = 'green';
                     playIcon.setAttribute('data-message', message.Message);
                     playIconLink.appendChild(playIcon);
                     logItem.appendChild(playIconLink);
+
+                    var copyIconLink = document.createElement('a');
+                    copyIconLink.href = '#';
+                    copyIconLink.addEventListener("click", function (evt) {
+                        var temp = document.createElement('textarea');
+                        temp.value = evt.target.getAttribute('data-message') + '\\n\\n';
+                        document.body.appendChild(temp);
+                        temp.select();
+                        document.execCommand('copy');
+                        temp.remove();
+                    });
+                    var copyIcon = document.createElement('i');
+                    copyIcon.className += 'icon fa fa-clipboard';
+                    copyIcon.setAttribute('data-message', message.Message);
+                    copyIconLink.appendChild(copyIcon);
+                    logItem.appendChild(copyIconLink);
 
                     var logMessage = document.createTextNode(message.Message);
                     logItem.appendChild(logMessage);
@@ -77,6 +92,24 @@ export default class ProBaseLogProvider {
                 }
                 .icon {
                     padding-right: 10px;
+                }
+                body.vscode-light i.fa-play {
+                    color: green;
+                }
+                body.vscode-dark i.fa-play {
+                    color: lightgreen;
+                }
+                body.vscode-high-contrast i.fa-play {
+                    color: lawngreen;
+                }
+                body.vscode-light i.fa-clipboard {
+                    color: black;
+                }
+                body.vscode-dark i.fa-clipboard {
+                    color: white;
+                }
+                body.vscode-high-contrast i.fa-clipboard {
+                    color: red;
                 }
             </style>
         </head>
