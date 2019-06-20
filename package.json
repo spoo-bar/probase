@@ -19,9 +19,7 @@
         "url": "https://github.com/spoon611/probase.git"
     },
     "activationEvents": [
-        "onLanguage:sql",
-        "onCommand:extension.showCurrentConnection",
-        "onCommand:extension.updateDocumentation"
+        "*"
     ],
     "main": "./out/extension",
     "contributes": {
