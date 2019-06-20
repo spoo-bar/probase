@@ -16,7 +16,13 @@ export default class ProBaseLogProvider {
         }
         else {
             this.LogPanel = vscode.window.createWebviewPanel('log', 'SQL Log', vscode.ViewColumn.Beside, {enableScripts: true});
-            this.LogPanel.onDidDispose(() => { clearInterval(this.LogInterval); }, null, context.subscriptions);
+            this.LogPanel.onDidDispose(() => { clearInterval(this.LogInterval); }, null, context.subscriptions);     
+            this.LogPanel!.webview.onDidReceiveMessage(message => {
+                vscode.window.showErrorMessage(message);
+                vscode.workspace.openTextDocument({language: 'sql', content: message}).then(newDocument => {
+                    vscode.window.showTextDocument(newDocument, vscode.ViewColumn.Beside);
+                });
+            }, undefined, context.subscriptions);       
         }        
     }
 
@@ -29,6 +35,10 @@ export default class ProBaseLogProvider {
             <title>SQL Logs</title>
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
             <script>
+
+                const vscode = acquireVsCodeApi();
+
+
                 window.addEventListener('message', event => {
                     const message = event.data;
 
@@ -42,10 +52,17 @@ export default class ProBaseLogProvider {
                     logItem.id = message.ID;
                     logItem.className += 'logItemDiv';
 
-                    var playIconLink = document.createElement('button');
+                    var playIconLink = document.createElement('a');
+                    playIconLink.href = '#';
+                    playIconLink.addEventListener("click", function (evt) {
+                        console.log(evt);
+                        var id = evt.target.id;
+                        vscode.postMessage(evt.target.getAttribute('data-message'));
+                    });
                     var playIcon = document.createElement('i');
                     playIcon.className += 'icon fa fa-play';
                     playIcon.style.color = 'green';
+                    playIcon.setAttribute('data-message', message.Message);
                     playIconLink.appendChild(playIcon);
                     logItem.appendChild(playIconLink);
 
@@ -70,7 +87,7 @@ export default class ProBaseLogProvider {
             </main>
         </body>
         </html>`;
-        this.updateTraceLog(this.LogPanel);
+        this.updateTraceLog(this.LogPanel);        
     }
 
     private updateTraceLog(logPanel : vscode.WebviewPanel | undefined) {
