@@ -6,26 +6,30 @@ import ProBaseSQLHelper from './proBaseSQLHelper';
 
 export default class ProBaseLogProvider {
 
-    LogPanel : vscode.WebviewPanel | undefined = undefined;
-    LogInterval : NodeJS.Timer = setInterval(() => this.updateTraceLog(this.LogPanel), 500);
-    State : vscode.Memento;
+    LogPanel: vscode.WebviewPanel | undefined = undefined;
+    LogInterval: NodeJS.Timer = setInterval(() => this.updateTraceLog(this.LogPanel), 500);
+    State: vscode.Memento;
 
-    constructor(context : vscode.ExtensionContext) {
+    constructor(context: vscode.ExtensionContext) {
         this.State = context.workspaceState;
-        if(this.LogPanel) {
+        if (this.LogPanel) {
             this.LogPanel.reveal(vscode.ViewColumn.Beside);
         }
         else {
-            this.LogPanel = vscode.window.createWebviewPanel('log', 'SQL Log', vscode.ViewColumn.Two, {enableScripts: true});
-            this.LogPanel.onDidDispose(() => { clearInterval(this.LogInterval); }, null, context.subscriptions);     
+            this.LogPanel = vscode.window.createWebviewPanel('log', 'SQL Log', vscode.ViewColumn.Two, { enableScripts: true });
+            this.LogPanel.onDidDispose(() => { clearInterval(this.LogInterval); }, null, context.subscriptions);
             this.LogPanel!.webview.onDidReceiveMessage(message => {
-                vscode.workspace.openTextDocument({language: 'sql', content: message}).then(newDocument => {
-                    vscode.window.showTextDocument(newDocument, vscode.ViewColumn.One).then(() => {
-                        ProBaseSQLHelper.replaceParameters();
-                    });                    
-                });
-            }, undefined, context.subscriptions);       
-        }        
+                switch (message.command) {
+                    case 'run-sql': vscode.workspace.openTextDocument({ language: 'sql', content: message.content }).then(newDocument => {
+                        vscode.window.showTextDocument(newDocument, vscode.ViewColumn.One).then(() => {
+                            ProBaseSQLHelper.replaceParameters();
+                        });
+                    });
+                        return;
+                }
+
+            }, undefined, context.subscriptions);
+        }
     }
 
     public ShowLog() {
@@ -37,7 +41,8 @@ export default class ProBaseLogProvider {
             <title>SQL Logs</title>
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
             <script>
-
+                var scrollEnabled = true;
+                
                 const vscode = acquireVsCodeApi();
 
                 window.addEventListener('message', event => {
@@ -56,7 +61,7 @@ export default class ProBaseLogProvider {
                     var playIconLink = document.createElement('a');
                     playIconLink.href = '#';
                     playIconLink.addEventListener("click", function (evt) {
-                        vscode.postMessage(evt.target.getAttribute('data-message'));
+                        postMessageToExtension('run-sql', evt.target.getAttribute('data-message'));
                     });
                     var playIcon = document.createElement('i');
                     playIcon.className += 'icon fa fa-play';
@@ -84,8 +89,18 @@ export default class ProBaseLogProvider {
                     logItem.appendChild(logMessage);
                     logItemsDiv.appendChild(logItem);
 
-                    window.scrollTo(0, document.body.scrollHeight);
-                });
+                    if(scrollEnabled) { window.scrollTo(0, document.body.scrollHeight); }
+                });            
+                
+                function postMessageToExtension(messageType, messageContent) {
+                    var message = {
+                        command : messageType,
+                        content : messageContent
+                    };
+                    vscode.postMessage(message);
+                    return;
+                }
+                
             </script>
             <style>
                 .logItemDiv {
@@ -160,22 +175,39 @@ export default class ProBaseLogProvider {
         <body>
             <main>
                 <div id="log-view-actions">
-                    <button id="clear-btn" onclick="console.log(2);"><i class="icon fa fa-trash"></i>Clear</button>
-                    <button id="scroll-btn" onclick="console.log(2);"><i class="icon fa fa-long-arrow-down"></i>Stop Scrolling</button>
+                    <i class="icon fa fa-trash"></i><button id="clear-btn" onclick="console.log(2);">Clear</button>
+                    <i class="icon fa fa-long-arrow-down"></i><button id="scroll-btn">Stop Scrolling</button>
                 </div>
                 <div id="logItems" style="padding-top: 22px;">
                 </div>
             </main>
+            <script>
+                document.getElementById('scroll-btn').onclick = function () {
+                    if(scrollEnabled) {
+                        console.log('Disabling scroll');
+                        scrollEnabled = false;
+                        document.getElementById('scroll-btn').innerText = "Start scrolling";
+                    }
+                    else {
+                        console.log('Enabling scroll');
+                        scrollEnabled = true;
+                        document.getElementById('scroll-btn').innerText = "Stop scrolling";
+                    }
+                };
+            </script>
         </body>
         </html>`;
-        this.updateTraceLog(this.LogPanel);        
+        this.updateTraceLog(this.LogPanel);
     }
 
-    private updateTraceLog(logPanel : vscode.WebviewPanel | undefined) {
+    private updateTraceLog(logPanel: vscode.WebviewPanel | undefined) {
         let logPath = Helper.GetSQLLogPath();
         fs.readFile(logPath, "utf-8", function (err, content) {
-            if (err)
-                throw new ProBaseError(err.name, err.message);
+
+            if (err) {
+                if (err.code !== "EBUSY")
+                    throw new ProBaseError(err.name, err.message);
+            }
 
             JSON.parse(content).forEach((element: any, index: Number) => {
                 let log: Log = Object.assign(new Log(), element);
