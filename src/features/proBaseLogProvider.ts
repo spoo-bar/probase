@@ -7,7 +7,7 @@ import ProBaseSQLHelper from './proBaseSQLHelper';
 export default class ProBaseLogProvider {
 
     LogPanel : vscode.WebviewPanel | undefined = undefined;
-    LogInterval : NodeJS.Timer = setInterval(() => this.updateTraceLog(this.LogPanel), 1000);
+    LogInterval : NodeJS.Timer = setInterval(() => this.updateTraceLog(this.LogPanel), 500);
     State : vscode.Memento;
 
     constructor(context : vscode.ExtensionContext) {
@@ -94,6 +94,15 @@ export default class ProBaseLogProvider {
                 .icon {
                     padding-right: 10px;
                 }
+                #log-view-actions {
+                    padding-top: 2px;
+                    max-height: 100%;
+                    margin-bottom: 20px;
+                    position: fixed;
+                    background-color: var(--vscode-editor-background);
+                    overflow: scroll;
+                    width: 100%;
+                }
                 body.vscode-light i.fa-play {
                     color: green;
                 }
@@ -112,11 +121,49 @@ export default class ProBaseLogProvider {
                 body.vscode-high-contrast i.fa-clipboard {
                     color: red;
                 }
+                body.vscode-light i.fa-trash {
+                    color: red;
+                }
+                body.vscode-dark i.fa-trash {
+                    color: red;
+                }
+                body.vscode-high-contrast i.fa-trash {
+                    color: red;
+                }
+                body.vscode-light i.fa-long-arrow-down {
+                    color: black;
+                }
+                body.vscode-dark i.fa-long-arrow-down {
+                    color: white;
+                }
+                body.vscode-high-contrast i.fa-long-arrow-down {
+                    color: red;
+                }
+                button {
+                    border: none;
+                    padding: 7px;
+                    outline: none;
+                    background: none;
+                    cursor: pointer;
+                }
+                body.vscode-light button {
+                    color: black;
+                }
+                body.vscode-dark button {
+                    color: white;
+                }
+                body.vscode-high-contrast button {
+                    color: white;
+                }
             </style>
         </head>
         <body>
             <main>
-                <div id="logItems">
+                <div id="log-view-actions">
+                    <button id="clear-btn" onclick="console.log(2);"><i class="icon fa fa-trash"></i>Clear</button>
+                    <button id="scroll-btn" onclick="console.log(2);"><i class="icon fa fa-long-arrow-down"></i>Stop Scrolling</button>
+                </div>
+                <div id="logItems" style="padding-top: 22px;">
                 </div>
             </main>
         </body>
