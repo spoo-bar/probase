@@ -28,6 +28,8 @@ export default class ProBaseSQLHelper {
 
     private static replaceParametersInSql(sqlQuery: string): string {
         var splitSql = sqlQuery.split("Parameters :");
+        if (splitSql.length == 1)
+            splitSql = sqlQuery.split("Parameters:");
         if (splitSql.length == 2) {
             sqlQuery = splitSql[0];
             var parameters = this.getSqlParameterObject(splitSql[1]);
