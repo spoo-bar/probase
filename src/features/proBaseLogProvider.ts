@@ -16,11 +16,11 @@ export default class ProBaseLogProvider {
             this.LogPanel.reveal(vscode.ViewColumn.Beside);
         }
         else {
-            this.LogPanel = vscode.window.createWebviewPanel('log', 'SQL Log', vscode.ViewColumn.Beside, {enableScripts: true});
+            this.LogPanel = vscode.window.createWebviewPanel('log', 'SQL Log', vscode.ViewColumn.Two, {enableScripts: true});
             this.LogPanel.onDidDispose(() => { clearInterval(this.LogInterval); }, null, context.subscriptions);     
             this.LogPanel!.webview.onDidReceiveMessage(message => {
                 vscode.workspace.openTextDocument({language: 'sql', content: message}).then(newDocument => {
-                    vscode.window.showTextDocument(newDocument, vscode.ViewColumn.Beside).then(() => {
+                    vscode.window.showTextDocument(newDocument, vscode.ViewColumn.One).then(() => {
                         ProBaseSQLHelper.replaceParameters();
                     });                    
                 });
@@ -39,7 +39,6 @@ export default class ProBaseLogProvider {
             <script>
 
                 const vscode = acquireVsCodeApi();
-
 
                 window.addEventListener('message', event => {
                     const message = event.data;
@@ -84,6 +83,8 @@ export default class ProBaseLogProvider {
                     var logMessage = document.createTextNode(message.Message);
                     logItem.appendChild(logMessage);
                     logItemsDiv.appendChild(logItem);
+
+                    window.scrollTo(0, document.body.scrollHeight);
                 });
             </script>
             <style>
