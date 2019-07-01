@@ -24,8 +24,7 @@
             logItem.id = message.ID;
             logItem.className += 'logItemDiv';
 
-            var playIconLink = document.createElement('a');
-            playIconLink.href = '#';
+            var playIconLink = document.createElement('button');
             playIconLink.addEventListener("click", function (evt) {
                 postMessageToExtension('run-sql', evt.target.getAttribute('data-message'));
             });
@@ -35,11 +34,10 @@
             playIconLink.appendChild(playIcon);
             logItem.appendChild(playIconLink);
 
-            var copyIconLink = document.createElement('a');
-            copyIconLink.href = '#';
+            var copyIconLink = document.createElement('button');
             copyIconLink.addEventListener("click", function (evt) {
                 var temp = document.createElement('textarea');
-                temp.value = evt.target.getAttribute('data-message') + '\\n\\n';
+                temp.value = evt.target.getAttribute('data-message');
                 temp.setAttribute('readonly', '');
                 temp.style.position = 'fixed';
                 temp.style.bottom = '0';
@@ -59,11 +57,13 @@
             copyIcon.className += 'icon fa fa-clipboard';
             copyIcon.setAttribute('data-message', message.Message);
             copyIconLink.appendChild(copyIcon);
-            //logItem.appendChild(copyIconLink);
+            logItem.appendChild(copyIconLink);
 
             var logMessage = document.createTextNode(message.Message);
             logItem.appendChild(logMessage);
             logItemsDiv.appendChild(logItem);
+
+            window.scrollTo(0, document.body.scrollHeight);
         });
 
         function postMessageToExtension(messageType, messageContent) {
@@ -136,27 +136,27 @@
         }
 
         body.vscode-light i.fa-pause-circle {
-            color: black;
+            color: var(--vscode-editor-foreground);
         }
 
         body.vscode-dark i.fa-pause-circle {
-            color: white;
+            color: var(--vscode-editor-foreground);
         }
 
         body.vscode-high-contrast i.fa-pause-circle {
-            color: red;
+            color: var(--vscode-editor-foreground);
         }
 
         body.vscode-light i.fa-play-circle {
-            color: black;
+            color: var(--vscode-editor-foreground);
         }
 
         body.vscode-dark i.fa-play-circle {
-            color: white;
+            color: var(--vscode-editor-foreground);
         }
 
         body.vscode-high-contrast i.fa-play-circle {
-            color: red;
+            color: var(--vscode-editor-foreground);
         }
 
         body.vscode-light i.fa-floppy-o {
@@ -193,6 +193,8 @@
 
         span {
             margin-right: 20px;
+            cursor: pointer;
+            text-decoration: none;
         }
     </style>
 </head>
@@ -200,8 +202,8 @@
 <body>
     <main>
         <div id="log-view-actions">
-            <a id="log-pause-btn" title="Pause/Resume log"><i class="icon fa fa-pause-circle"></i><span>Pause</span></a> 
-            <a id="clear-btn" title="Clear Log"><i class="icon fa fa-trash"></i><span>Clear</span></a>
+            <button id="log-pause-btn" title="Pause/Resume log"><i class="icon fa fa-pause-circle"></i><span>Pause</span></button> 
+            <button id="clear-btn" title="Clear Log"><i class="icon fa fa-trash"></i><span>Clear</span></button>
             <!-- <a id="save-btn" title="Save Log"><i class="icon fa fa-floppy-o"></i><span>Save Log</span></a> -->
         </div>
         <div id="logItems" style="padding-top: 22px;">
@@ -212,10 +214,12 @@
             if (logEnabled) {
                 logEnabled = false;
                 document.getElementById('log-pause-btn').innerHTML = "<i class=\"icon fa fa-play-circle\"></i><span>Resume</span>";
+                postMessageToExtension('pause-log', '');
             }
             else {
                 logEnabled = true;
                 document.getElementById('log-pause-btn').innerHTML = "<i class=\"icon fa fa-pause-circle\"></i><span>Pause</span>";
+                postMessageToExtension('resume-log', '');
             }
         };
         document.getElementById('clear-btn').onclick = function () {

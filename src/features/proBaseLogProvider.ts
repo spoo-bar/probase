@@ -21,13 +21,23 @@ export default class ProBaseLogProvider {
             this.LogPanel.onDidDispose(() => { clearInterval(this.LogInterval); }, null, context.subscriptions);
             this.LogPanel!.webview.onDidReceiveMessage(message => {
                 switch (message.command) {
-                    case 'run-sql': vscode.workspace.openTextDocument({ language: 'sql', content: message.content }).then(newDocument => {
-                        vscode.window.showTextDocument(newDocument, vscode.ViewColumn.One).then(() => {
-                            ProBaseSQLHelper.replaceParameters();
+                    case 'run-sql':
+                        vscode.workspace.openTextDocument({ language: 'sql', content: message.content }).then(newDocument => {
+                            vscode.window.showTextDocument(newDocument, vscode.ViewColumn.One).then(() => {
+                                ProBaseSQLHelper.replaceParameters();
+                            });
                         });
-                    });
                         break;
-                    case 'clear-log' : Helper.ClearLogFile();;
+                    case 'clear-log':
+                        Helper.ClearLogFile();;
+                        break;
+                    case 'pause-log':
+                        clearInterval(this.LogInterval);
+                        vscode.window.showInformationMessage('Pausing the log');
+                        break;
+                    case 'resume-log':
+                        this.LogInterval = setInterval(() => this.updateTraceLog(this.LogPanel), 500);
+                        vscode.window.showInformationMessage('Resuming the log');
                         break;
                 }
 
