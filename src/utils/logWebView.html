@@ -7,7 +7,7 @@
     <title>SQL Logs</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script>
-        var scrollEnabled = true;
+        var logEnabled = true;
 
         const vscode = acquireVsCodeApi();
 
@@ -64,8 +64,6 @@
             var logMessage = document.createTextNode(message.Message);
             logItem.appendChild(logMessage);
             logItemsDiv.appendChild(logItem);
-
-            if (scrollEnabled) { window.scrollTo(0, document.body.scrollHeight); }
         });
 
         function postMessageToExtension(messageType, messageContent) {
@@ -211,12 +209,12 @@
     </main>
     <script>
         document.getElementById('log-pause-btn').onclick = function () {
-            if (scrollEnabled) {
-                scrollEnabled = false;
+            if (logEnabled) {
+                logEnabled = false;
                 document.getElementById('log-pause-btn').innerHTML = "<i class=\"icon fa fa-play-circle\"></i><span>Resume</span>";
             }
             else {
-                scrollEnabled = true;
+                logEnabled = true;
                 document.getElementById('log-pause-btn').innerHTML = "<i class=\"icon fa fa-pause-circle\"></i><span>Pause</span>";
             }
         };
