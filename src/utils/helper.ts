@@ -12,6 +12,10 @@ export default class Helper {
         return vscode.workspace.getConfiguration().get("code.dbscriptsFolderPath") as string;
     }
 
+    public static ShouldFormatDocument() : Boolean {
+        return vscode.workspace.getConfiguration().get("code.formatSql") as Boolean;
+    }
+
     public static IsRepositorySetup(): boolean {
         var dbScriptRepoFolder = this.GetDbScriptsPath();
         if (!dbScriptRepoFolder)

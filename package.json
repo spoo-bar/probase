@@ -61,6 +61,12 @@
                         "description": "The path to SQL Log JSON file",
                         "scope": "application",
                         "default": "C:\\Program Files (x86)\\Software Innovation\\TraceView\\sqllog.json"
+                    },
+                    "code.formatSql": {
+                        "type": "boolean",
+                        "default" : true,
+                        "description": "Format SQL when replacing parameters and running SQL from logs",
+                        "scope": "application"
                     }
                 }
             }
@@ -83,6 +89,7 @@
     },
     "dependencies": {
         "fs": "0.0.1-security",
-        "path": "^0.12.7"
+        "path": "^0.12.7",
+        "sql-formatter": "^2.3.3"
     }
 }

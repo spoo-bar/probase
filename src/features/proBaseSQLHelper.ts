@@ -1,4 +1,6 @@
 import * as vscode from 'vscode'
+import Helper from '../utils/helper';
+const sqlFormatter = require('sql-formatter'); // TODO : replace this with import statement after writing a type definition https://stackoverflow.com/questions/41292559/could-not-find-a-declaration-file-for-module-module-name-path-to-module-nam
 
 export default class ProBaseSQLHelper {
 
@@ -14,16 +16,22 @@ export default class ProBaseSQLHelper {
                 var documentRange = document.validateRange(new vscode.Range(0, 0, document.lineCount, 0));
 
                 var newText: string = "";
-                for (var sqlQuery of sqlQueries) {
-                    var newSql = this.replaceParametersInSql(sqlQuery); // Replacing parameters value in SQL
-                    newText += newSql + "\n\n";
+                for (var sqlQuery of sqlQueries) {                    
+                    newText += ProBaseSQLHelper.getNewSqlQuery(sqlQuery);
                 }
-
+                
                 currentTextEditor.edit((editBuilder) => {
                     editBuilder.replace(documentRange, newText.trim()); // Replacing editor text
                 });
             }
         }
+    }
+
+    private static getNewSqlQuery(sqlQuery: string) {
+        var newSql = this.replaceParametersInSql(sqlQuery); // Replacing parameters value in SQL
+        if(Helper.ShouldFormatDocument())
+            newSql = sqlFormatter.format(newSql, { indent: '    ' })
+        return newSql + "\n\n";
     }
 
     private static replaceParametersInSql(sqlQuery: string): string {
