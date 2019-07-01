@@ -193,7 +193,7 @@
     <main>
         <div id="log-view-actions">
             <a id="log-pause-btn" title="Pause/Resume log"><i class="icon fa fa-pause-circle"></i><span>Pause Log</span></a> 
-            <a id="clear-btn" title="Clear Log" onclick="console.log(2);"><i class="icon fa fa-trash"></i></a><span>Clear Log</span>
+            <a id="clear-btn" title="Clear Log"><i class="icon fa fa-trash"></i><span>Clear Log</span></a>
             <!-- <a id="save-btn" title="Save Log"><i class="icon fa fa-floppy-o"></i><span>Save Log</span></a> -->
         </div>
         <div id="logItems" style="padding-top: 22px;">
@@ -209,6 +209,11 @@
                 scrollEnabled = true;
                 document.getElementById('log-pause-btn').innerHTML = "<i class=\"icon fa fa-pause-circle\"></i><span>Pause Log</span>";
             }
+        };
+        document.getElementById('clear-btn').onclick = function () {
+            var logItemsDiv = document.getElementById('logItems');
+            logItemsDiv.innerHTML = '';
+            postMessageToExtension('clear-log', '');
         };
     </script>
 </body>

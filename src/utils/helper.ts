@@ -63,6 +63,14 @@ export default class Helper {
         return vscode.workspace.getConfiguration().get("code.sqlLogPath") as string;
     }
 
+    public static ClearLogFile() : void {
+        var logFilePath = this.GetSQLLogPath();
+        fs.writeFile(logFilePath, '', function (err) {
+            if(err)
+                throw new ProBaseError(err.name, err.message);
+        });
+    }
+
     private static GetSQLFolder(): string {
         var sqlSource = this.GetSqlSource();
         switch (sqlSource) {

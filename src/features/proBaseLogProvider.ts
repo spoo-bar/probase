@@ -26,7 +26,9 @@ export default class ProBaseLogProvider {
                             ProBaseSQLHelper.replaceParameters();
                         });
                     });
-                        return;
+                        break;
+                    case 'clear-log' : Helper.ClearLogFile();;
+                        break;
                 }
 
             }, undefined, context.subscriptions);
