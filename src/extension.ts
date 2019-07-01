@@ -7,7 +7,6 @@ import * as vscode from 'vscode';
 // This is a complementary set of APIs that add SQL / Data-specific functionality to the app
 // Import the module and reference it with the alias sqlops in your code below
 
-import * as sqlops from 'sqlops';
 import ProBaseDefinitionProvider from './features/proBaseDefinitionProvider';
 import ProBaseHoverProvider from './features/proBaseHoverProvider';
 import Helper from './utils/helper';
@@ -35,22 +34,11 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.commands.registerCommand('extension.replaceSQLParameters', () => {
         ProBaseSQLHelper.replaceParameters();
     }));
-
+    
+    //Opens the SQL logs in a new view
     context.subscriptions.push(vscode.commands.registerCommand('extension.openSQLLogViewer', () => {
-        var logHelper = new ProBaseLogProvider(context);
-        logHelper.ShowLog();
-    }));
-
-    context.subscriptions.push(vscode.commands.registerCommand('extension.showCurrentConnection', () => {
-        // The code you place here will be executed every time your command is executed
-
-        // Display a message box to the user
-        sqlops.connection.getCurrentConnection().then(connection => {
-            let connectionId = connection ? connection.connectionId : 'No connection found!';
-            vscode.window.showInformationMessage(connectionId);
-        }, error => {
-            console.info(error);
-        });
+        var logProvider = new ProBaseLogProvider(context);
+        ProBaseLogProvider.ShowLog(logProvider);
     }));
 
     if (!context.globalState.get(Helper.IsDocumentationLoaded)) {

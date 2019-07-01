@@ -25,10 +25,6 @@
     "contributes": {
         "commands": [
             {
-                "command": "extension.showCurrentConnection",
-                "title": "Show Current Connection"
-            },
-            {
                 "command": "extension.updateDocumentation",
                 "title": "Update ProArc DB tables documentation"
             },
@@ -72,7 +68,7 @@
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./",
+        "compile": "tsc -p ./ && copy /Y src\\utils\\logWebView.html out\\utils",
         "watch": "tsc -watch -p ./",
         "postinstall": "node ./node_modules/vscode/bin/install && node ./node_modules/sqlops/bin/install",
         "test": "npm run compile && node ./node_modules/vscode/bin/test"

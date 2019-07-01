@@ -1,5 +1,6 @@
 import * as vscode from 'vscode'
 import * as fs from 'fs';
+import * as path from 'path';
 import Helper from '../utils/helper';
 import ProBaseError from '../utils/probaseError';
 import ProBaseSQLHelper from './proBaseSQLHelper';
@@ -32,172 +33,16 @@ export default class ProBaseLogProvider {
         }
     }
 
-    public ShowLog() {
-        this.LogPanel!.webview.html = `<!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>SQL Logs</title>
-            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-            <script>
-                var scrollEnabled = true;
-                
-                const vscode = acquireVsCodeApi();
+    public static ShowLog(logProvider: ProBaseLogProvider) {
+        var webViewHtmlPath = path.join(__dirname, "../utils/logWebView.html");
+        fs.readFile(webViewHtmlPath, "utf-8", function (err, content) {
 
-                window.addEventListener('message', event => {
-                    const message = event.data;
+            if (err)
+                throw new ProBaseError(err.name, err.message);
 
-                    //Checking if element already exists and do nothing if it does
-                    var ele = document.getElementById(message.ID);
-                    if(typeof(ele) != undefined && ele != null)
-                        return;
-
-                    var logItemsDiv = document.getElementById('logItems');
-                    var logItem = document.createElement('div');
-                    logItem.id = message.ID;
-                    logItem.className += 'logItemDiv';
-
-                    var playIconLink = document.createElement('a');
-                    playIconLink.href = '#';
-                    playIconLink.addEventListener("click", function (evt) {
-                        postMessageToExtension('run-sql', evt.target.getAttribute('data-message'));
-                    });
-                    var playIcon = document.createElement('i');
-                    playIcon.className += 'icon fa fa-play';
-                    playIcon.setAttribute('data-message', message.Message);
-                    playIconLink.appendChild(playIcon);
-                    logItem.appendChild(playIconLink);
-
-                    var copyIconLink = document.createElement('a');
-                    copyIconLink.href = '#';
-                    copyIconLink.addEventListener("click", function (evt) {
-                        var temp = document.createElement('textarea');
-                        temp.value = evt.target.getAttribute('data-message') + '\\n\\n';
-                        document.body.appendChild(temp);
-                        temp.select();
-                        document.execCommand('copy');
-                        temp.remove();
-                    });
-                    var copyIcon = document.createElement('i');
-                    copyIcon.className += 'icon fa fa-clipboard';
-                    copyIcon.setAttribute('data-message', message.Message);
-                    copyIconLink.appendChild(copyIcon);
-                    logItem.appendChild(copyIconLink);
-
-                    var logMessage = document.createTextNode(message.Message);
-                    logItem.appendChild(logMessage);
-                    logItemsDiv.appendChild(logItem);
-
-                    if(scrollEnabled) { window.scrollTo(0, document.body.scrollHeight); }
-                });            
-                
-                function postMessageToExtension(messageType, messageContent) {
-                    var message = {
-                        command : messageType,
-                        content : messageContent
-                    };
-                    vscode.postMessage(message);
-                    return;
-                }
-                
-            </script>
-            <style>
-                .logItemDiv {
-                    padding: 15px;
-                }
-                .icon {
-                    padding-right: 10px;
-                }
-                #log-view-actions {
-                    padding-top: 2px;
-                    max-height: 100%;
-                    margin-bottom: 20px;
-                    position: fixed;
-                    background-color: var(--vscode-editor-background);
-                    overflow: scroll;
-                    width: 100%;
-                }
-                body.vscode-light i.fa-play {
-                    color: green;
-                }
-                body.vscode-dark i.fa-play {
-                    color: lightgreen;
-                }
-                body.vscode-high-contrast i.fa-play {
-                    color: lawngreen;
-                }
-                body.vscode-light i.fa-clipboard {
-                    color: black;
-                }
-                body.vscode-dark i.fa-clipboard {
-                    color: white;
-                }
-                body.vscode-high-contrast i.fa-clipboard {
-                    color: red;
-                }
-                body.vscode-light i.fa-trash {
-                    color: red;
-                }
-                body.vscode-dark i.fa-trash {
-                    color: red;
-                }
-                body.vscode-high-contrast i.fa-trash {
-                    color: red;
-                }
-                body.vscode-light i.fa-long-arrow-down {
-                    color: black;
-                }
-                body.vscode-dark i.fa-long-arrow-down {
-                    color: white;
-                }
-                body.vscode-high-contrast i.fa-long-arrow-down {
-                    color: red;
-                }
-                button {
-                    border: none;
-                    padding: 7px;
-                    outline: none;
-                    background: none;
-                    cursor: pointer;
-                }
-                body.vscode-light button {
-                    color: black;
-                }
-                body.vscode-dark button {
-                    color: white;
-                }
-                body.vscode-high-contrast button {
-                    color: white;
-                }
-            </style>
-        </head>
-        <body>
-            <main>
-                <div id="log-view-actions">
-                    <i class="icon fa fa-trash"></i><button id="clear-btn" onclick="console.log(2);">Clear</button>
-                    <i class="icon fa fa-long-arrow-down"></i><button id="scroll-btn">Stop Scrolling</button>
-                </div>
-                <div id="logItems" style="padding-top: 22px;">
-                </div>
-            </main>
-            <script>
-                document.getElementById('scroll-btn').onclick = function () {
-                    if(scrollEnabled) {
-                        console.log('Disabling scroll');
-                        scrollEnabled = false;
-                        document.getElementById('scroll-btn').innerText = "Start scrolling";
-                    }
-                    else {
-                        console.log('Enabling scroll');
-                        scrollEnabled = true;
-                        document.getElementById('scroll-btn').innerText = "Stop scrolling";
-                    }
-                };
-            </script>
-        </body>
-        </html>`;
-        this.updateTraceLog(this.LogPanel);
+            logProvider.LogPanel!.webview.html = content;
+            logProvider.updateTraceLog(logProvider.LogPanel);
+        });
     }
 
     private updateTraceLog(logPanel: vscode.WebviewPanel | undefined) {
