@@ -43,7 +43,7 @@ export default class ProBaseSQLHelper {
             var parameters = this.getSqlParameterObject(splitSql[1]);
             for (var parameter of parameters) {
                 var paramValue = this.getValidParamValue(parameter);
-                sqlQuery = sqlQuery.replace(parameter.Name, paramValue);
+                sqlQuery = sqlQuery.replace(new RegExp(parameter.Name, "g"), paramValue);
             }
 
         }
