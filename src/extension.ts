@@ -12,11 +12,13 @@ import ProBaseHoverProvider from './features/proBaseHoverProvider';
 import Helper from './utils/helper';
 import ProBaseSQLHelper from './features/proBaseSQLHelper';
 import ProBaseLogProvider from './features/proBaseLogProvider';
+import StatusBarHelper from './utils/statusBarHelper';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 
+    StatusBarHelper.createStatusBarItems();
 
     //Enables Go to Definition and Peek Definition
     context.subscriptions.push(vscode.languages.registerDefinitionProvider({ language: "sql" }, new ProBaseDefinitionProvider()))
@@ -30,7 +32,6 @@ export function activate(context: vscode.ExtensionContext) {
     }));
 
     //Replaces SQL Parameter values
-    createStatusBarItems();
     context.subscriptions.push(vscode.commands.registerCommand('extension.replaceSQLParameters', () => {
         ProBaseSQLHelper.replaceParameters();
     }));
@@ -49,26 +50,6 @@ export function activate(context: vscode.ExtensionContext) {
     if (!context.globalState.get(Helper.IsDocumentationLoaded)) {
         Helper.LoadDocumentation(context.globalState);
     }
-}
-
-function createStatusBarItems() {
-    var replaceParametersStatusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
-    replaceParametersStatusItem.text = "$(zap) Replace Parameters";
-    replaceParametersStatusItem.tooltip = "Replace parameters in SQL";
-    replaceParametersStatusItem.command = "extension.replaceSQLParameters";
-    replaceParametersStatusItem.show();
-
-    var removeDbNameStatusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
-    removeDbNameStatusItem.text = "$(trashcan) Remove Database Name";
-    removeDbNameStatusItem.tooltip = "Remove database name from query";
-    removeDbNameStatusItem.command = "extension.cleanDatabaseName";
-    removeDbNameStatusItem.show();
-
-    var openLogViewerStatusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
-    openLogViewerStatusItem.text = "$(clippy) Open SQL Log Viewer";
-    openLogViewerStatusItem.tooltip = "Open SQL Log Viewer";
-    openLogViewerStatusItem.command = "extension.openSQLLogViewer";
-    openLogViewerStatusItem.show();
 }
 
 // this method is called when your extension is deactivated
