@@ -16,10 +16,10 @@ export default class ProBaseSQLHelper {
                 var documentRange = document.validateRange(new vscode.Range(0, 0, document.lineCount, 0));
 
                 var newText: string = "";
-                for (var sqlQuery of sqlQueries) {                    
+                for (var sqlQuery of sqlQueries) {
                     newText += ProBaseSQLHelper.getNewSqlQuery(sqlQuery);
                 }
-                
+
                 currentTextEditor.edit((editBuilder) => {
                     editBuilder.replace(documentRange, newText.trim()); // Replacing editor text
                 });
@@ -27,9 +27,41 @@ export default class ProBaseSQLHelper {
         }
     }
 
+    public static cleanDatabaseName(): void {
+        var currentTextEditor = vscode.window.activeTextEditor;
+
+        if (currentTextEditor) {
+            var document = currentTextEditor.document;
+            if (document.languageId === "sql") {
+
+                vscode.window.showInputBox({ prompt: "Input the database name", placeHolder: "ProArc7" }).then((dbName) => {
+                    if (dbName) {
+                        var text = sqlFormatter.format(document.getText(), { indent: '    ' });
+                        var documentRange = document.validateRange(new vscode.Range(0, 0, document.lineCount, 0));
+
+                        var dbNameString_sql = `[${dbName}]..`;
+                        var dbNameString_ora = `[${dbName}].`;
+
+                        var newText: string = "";
+                        for(let line of text.split("\n")) {
+                            let newLine : string = "";
+                            newLine = line.replace(dbNameString_sql, " ");
+                            newLine = newLine.replace(dbNameString_ora, " ");
+                            newText += newLine + "\n";
+                        }
+                        newText = sqlFormatter.format(newText, { indent: '    ' });
+                        currentTextEditor!.edit((editBuilder) => {
+                            editBuilder.replace(documentRange, newText.trim()); // Replacing editor text
+                        });
+                    }
+                });
+            }
+        }
+    }
+
     private static getNewSqlQuery(sqlQuery: string) {
         var newSql = this.replaceParametersInSql(sqlQuery); // Replacing parameters value in SQL
-        if(Helper.ShouldFormatDocument())
+        if (Helper.ShouldFormatDocument())
             newSql = sqlFormatter.format(newSql, { indent: '    ' })
         return newSql + "\n\n";
     }

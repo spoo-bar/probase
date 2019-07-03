@@ -41,6 +41,11 @@ export function activate(context: vscode.ExtensionContext) {
         ProBaseLogProvider.ShowLog(logProvider);
     }));
 
+    //Cleans the database name from the SQL
+    context.subscriptions.push(vscode.commands.registerCommand('extension.cleanDatabaseName', () => {
+        ProBaseSQLHelper.cleanDatabaseName();
+    }));
+
     if (!context.globalState.get(Helper.IsDocumentationLoaded)) {
         Helper.LoadDocumentation(context.globalState);
     }
@@ -48,10 +53,16 @@ export function activate(context: vscode.ExtensionContext) {
 
 function createStatusBarItems() {
     var replaceParametersStatusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
-    replaceParametersStatusItem.text = "$(beaker) Replace Parameters";
+    replaceParametersStatusItem.text = "$(zap) Replace Parameters";
     replaceParametersStatusItem.tooltip = "Replace parameters in SQL";
     replaceParametersStatusItem.command = "extension.replaceSQLParameters";
     replaceParametersStatusItem.show();
+
+    var removeDbNameStatusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+    removeDbNameStatusItem.text = "$(trashcan) Remove Database Name";
+    removeDbNameStatusItem.tooltip = "Remove database name from query";
+    removeDbNameStatusItem.command = "extension.cleanDatabaseName";
+    removeDbNameStatusItem.show();
 
     var openLogViewerStatusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
     openLogViewerStatusItem.text = "$(clippy) Open SQL Log Viewer";
