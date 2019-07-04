@@ -26,23 +26,23 @@
         "commands": [
             {
                 "command": "extension.updateDocumentation",
-                "title": "Update ProArc DB tables documentation"
+                "title": "Probase: Update ProArc DB tables documentation"
             },
             {
                 "command": "extension.replaceSQLParameters",
-                "title": "Replace SQL Parameter values"
+                "title": "Probase: Replace SQL Parameter values"
             },
             {
                 "command": "extension.openSQLLogViewer",
-                "title": "Open SQL Log Viewer"
+                "title": "Probase: Open SQL Trace Viewer"
             },
             {
                 "command": "extension.cleanDatabaseName",
-                "title": "Remove database name from query"
+                "title": "Probase: Remove database name from query"
             },
             {
                 "command": "extension.importLog",
-                "title": "Import and Open Log"
+                "title": "Probase: Open Log"
             }
         ],
         "configuration": [
