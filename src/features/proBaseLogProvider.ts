@@ -8,7 +8,7 @@ import ProBaseSQLHelper from './proBaseSQLHelper';
 export default class ProBaseLogProvider {
 
     LogPanel: vscode.WebviewPanel | undefined = undefined;
-    LogInterval: NodeJS.Timer = setInterval(() => this.updateTraceLog(this.LogPanel), 500);
+    LogInterval: NodeJS.Timer = setInterval(() => this.updateTraceLog(this.LogPanel), 250);
     State: vscode.Memento;
 
     constructor(context: vscode.ExtensionContext) {
@@ -36,8 +36,16 @@ export default class ProBaseLogProvider {
                         vscode.window.showInformationMessage('Pausing the log');
                         break;
                     case 'resume-log':
-                        this.LogInterval = setInterval(() => this.updateTraceLog(this.LogPanel), 500);
+                        this.LogInterval = setInterval(() => this.updateTraceLog(this.LogPanel), 250);
                         vscode.window.showInformationMessage('Resuming the log');
+                        break;
+                    case 'export-log':
+                        var logs = message.content;
+                        vscode.workspace.openTextDocument({ language: 'json', content: JSON.stringify(logs, null, 2) }).then(newDoc => {
+                            vscode.window.showTextDocument(newDoc, vscode.ViewColumn.One).then((editor) => {
+                                editor.document.save();
+                            });;
+                        });
                         break;
                 }
 
