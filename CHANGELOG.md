@@ -12,6 +12,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ### Changed
 - The extension now activates as soon as Azure Data Studio opens (earlier would trigger on commands or on SQL documents)
 - On replacing SQL parameters, the SQL is now formatted based on the settings
+- Prepended extension name to commands
 
 ## 1.0.0
 ### Added
