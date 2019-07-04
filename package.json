@@ -39,6 +39,10 @@
             {
                 "command": "extension.cleanDatabaseName",
                 "title": "Remove database name from query"
+            },
+            {
+                "command": "extension.importLog",
+                "title": "Import and Open Log"
             }
         ],
         "configuration": [

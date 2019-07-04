@@ -10,14 +10,16 @@ export default class ProBaseLogProvider {
     LogPanel: vscode.WebviewPanel | undefined = undefined;
     LogInterval: NodeJS.Timer = setInterval(() => this.updateTraceLog(this.LogPanel), 250);
     State: vscode.Memento;
+    LogPath: string;
 
-    constructor(context: vscode.ExtensionContext) {
+    constructor(context: vscode.ExtensionContext, logPath: string) {
         this.State = context.workspaceState;
+        this.LogPath = logPath;
         if (this.LogPanel) {
             this.LogPanel.reveal(vscode.ViewColumn.Beside);
         }
         else {
-            this.LogPanel = vscode.window.createWebviewPanel('log', 'SQL Log', vscode.ViewColumn.Two, { enableScripts: true });
+            this.LogPanel = vscode.window.createWebviewPanel('log', this.getWebviewTitle(logPath), vscode.ViewColumn.Two, { enableScripts: true });
             this.LogPanel.onDidDispose(() => { clearInterval(this.LogInterval); }, null, context.subscriptions);
             this.LogPanel!.webview.onDidReceiveMessage(message => {
                 switch (message.command) {
@@ -53,21 +55,20 @@ export default class ProBaseLogProvider {
         }
     }
 
-    public static ShowLog(logProvider: ProBaseLogProvider) {
+    public static ShowLog(logProvider: ProBaseLogProvider, isLiveLog: Boolean) {
         var webViewHtmlPath = path.join(__dirname, "../utils/logWebView.html");
         fs.readFile(webViewHtmlPath, "utf-8", function (err, content) {
 
             if (err)
                 throw new ProBaseError(err.name, err.message);
 
-            logProvider.LogPanel!.webview.html = content;
+            logProvider.LogPanel!.webview.html = isLiveLog ? content.replace('%%LIVELOG%%', 'true') : content.replace('%%LIVELOG%%', 'false');
             logProvider.updateTraceLog(logProvider.LogPanel);
         });
     }
 
     private updateTraceLog(logPanel: vscode.WebviewPanel | undefined) {
-        let logPath = Helper.GetSQLLogPath();
-        fs.readFile(logPath, "utf-8", function (err, content) {
+        fs.readFile(this.LogPath, "utf-8", function (err, content) {
 
             if (err) {
                 if (err.code !== "EBUSY")
@@ -79,6 +80,10 @@ export default class ProBaseLogProvider {
                 logPanel!.webview.postMessage(log);
             });
         });
+    }    
+
+    private getWebviewTitle(logPath: string): string {
+        return `SQL Log - ${logPath.replace(/^.*[\\\/]/, '')}`;
     }
 
 }

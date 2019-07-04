@@ -38,13 +38,23 @@ export function activate(context: vscode.ExtensionContext) {
     
     //Opens the SQL logs in a new view
     context.subscriptions.push(vscode.commands.registerCommand('extension.openSQLLogViewer', () => {
-        var logProvider = new ProBaseLogProvider(context);
-        ProBaseLogProvider.ShowLog(logProvider);
+        var logProvider = new ProBaseLogProvider(context, Helper.GetSQLLogPath());
+        ProBaseLogProvider.ShowLog(logProvider, true);
     }));
 
     //Cleans the database name from the SQL
     context.subscriptions.push(vscode.commands.registerCommand('extension.cleanDatabaseName', () => {
         ProBaseSQLHelper.cleanDatabaseName();
+    }));
+
+    //Imports and opens logs
+    context.subscriptions.push(vscode.commands.registerCommand('extension.importLog', () => {
+        vscode.window.showOpenDialog({ canSelectFiles: true, canSelectFolders: false, canSelectMany: false, filters: { 'Proarc SQL Logs': ['json'] } }).then((uris) => {
+            if(uris) {
+                var logProvider = new ProBaseLogProvider(context, uris[0].fsPath);
+                ProBaseLogProvider.ShowLog(logProvider, false);
+            }
+        });
     }));
 
     if (!context.globalState.get(Helper.IsDocumentationLoaded)) {

@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script>
         var logEnabled = true;
+        var isLiveLog = %%LIVELOG%%;
 
         const vscode = acquireVsCodeApi();
 
@@ -244,6 +245,15 @@
             }
             postMessageToExtension('export-log', logs);
         };
+
+        if(isLiveLog === false) {
+            document.getElementById('log-pause-btn').disabled = true;
+            document.getElementById('log-pause-btn').style.opacity = "0.3";
+
+            document.getElementById('clear-btn').disabled = true;
+            document.getElementById('clear-btn').style.opacity = "0.3";
+        }
+
     </script>
 </body>
 
