@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script>
         var logEnabled = true;
+        var autoScrollOn = true;
         var isLiveLog = %%LIVELOG%%;
 
         const vscode = acquireVsCodeApi();
@@ -67,7 +68,8 @@
             logItem.appendChild(logMessage);
             logItemsDiv.appendChild(logItem);
 
-            window.scrollTo(0, document.body.scrollHeight);
+            if(autoScrollOn)
+                window.scrollTo(0, document.body.scrollHeight);
         });
 
         function postMessageToExtension(messageType, messageContent) {
@@ -206,7 +208,8 @@
 <body>
     <main>
         <div id="log-view-actions">
-            <button id="log-pause-btn" title="Pause/Resume log"><i class="icon fa fa-pause-circle"></i><span>Pause</span></button> 
+            <button id="auto-scroll-btn" title="Auto Scroll"><i class="icon fa fa fa fa-angle-double-down"></i><span>Auto Scroll : On</span></button>
+            <button id="log-pause-btn" title="Pause/Resume log"><i class="icon fa fa-pause-circle"></i><span>Pause</span></button>
             <button id="clear-btn" title="Clear Log"><i class="icon fa fa-trash"></i><span>Clear</span></button>
             <button id="export-btn" title="Export Log" style="float: right;"><i class="icon fa fa-share-square-o"></i><span>Export Log</span></button>
         </div>
@@ -214,6 +217,16 @@
         </div>
     </main>
     <script>
+        document.getElementById('auto-scroll-btn').onclick = function () {
+            if (autoScrollOn) {
+                autoScrollOn = false;
+                document.getElementById('auto-scroll-btn').innerHTML = "<i class=\"icon fa fa-angle-double-down\"></i><span>Auto Scroll : Off</span>";
+            }
+            else {
+                autoScrollOn = true;
+                document.getElementById('auto-scroll-btn').innerHTML = "<i class=\"icon fa fa-angle-double-down\"></i><span>Auto Scroll : On</span>";
+            }
+        };
         document.getElementById('log-pause-btn').onclick = function () {
             if (logEnabled) {
                 logEnabled = false;
@@ -234,19 +247,22 @@
         document.getElementById('export-btn').onclick = function () {
             var logItemsDiv = document.getElementById('logItems');
             var logs = [];
-            for(let logItem of logItemsDiv.children) {
+            for (let logItem of logItemsDiv.children) {
                 var log = {
-                    ID : logItem.id,
-                    Message : logItem.textContent,
-                    Date : logItem.getAttribute("data-date"),
-                    Time :logItem.getAttribute("data-time")
+                    ID: logItem.id,
+                    Message: logItem.textContent,
+                    Date: logItem.getAttribute("data-date"),
+                    Time: logItem.getAttribute("data-time")
                 };
                 logs.push(log);
             }
             postMessageToExtension('export-log', logs);
         };
-
-        if(isLiveLog === false) {
+        
+        if (isLiveLog === false) {
+            document.getElementById('auto-scroll-btn').disabled = true;
+            document.getElementById('auto-scroll-btn').style.opacity = "0.3";
+            
             document.getElementById('log-pause-btn').disabled = true;
             document.getElementById('log-pause-btn').style.opacity = "0.3";
 
