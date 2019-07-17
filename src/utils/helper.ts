@@ -28,7 +28,27 @@ export default class Helper {
     public static GetTablesFolderPath(): string {
         if (Helper.IsRepositorySetup()) {
             if (fs.existsSync(Helper.GetDbScriptsPath())) {
-                var tablesFolder = path.join(Helper.GetDbScriptsPath(), "Source", "LATEST_INSTALL", this.GetSQLFolder(), "tables");
+                var tablesFolder = path.join(Helper.GetDbScriptsPath(), "Source", "LATEST_INSTALL", this.GetSQLSourceFolder(), "tables");
+                if (fs.existsSync(tablesFolder)) {
+                    return tablesFolder;
+                }
+                else {
+                    throw new ProBaseError("DbScriptsPathInvalid", "The path " + tablesFolder + " is invalid.");
+                }
+            }
+            else {
+                throw new ProBaseError("DbScriptsPathInvalid", "DbScript Repository path is invalid and does not exist.");
+            }
+        }
+        else {
+            throw new ProBaseError("RepositoryNotSetup", "DbScripts Repository path not setup in File > Preferences > Settings");
+        }
+    }
+
+    public static GetUpgradeScriptsFolderPath(): string {
+        if (Helper.IsRepositorySetup()) {
+            if (fs.existsSync(Helper.GetDbScriptsPath())) {
+                var tablesFolder = path.join(Helper.GetDbScriptsPath(), "Source", "LATEST_INSTALL", "upgrade", this.GetSQLUpgradeFolder());
                 if (fs.existsSync(tablesFolder)) {
                     return tablesFolder;
                 }
@@ -75,11 +95,20 @@ export default class Helper {
         });
     }
 
-    private static GetSQLFolder(): string {
+    private static GetSQLSourceFolder(): string {
         var sqlSource = this.GetSqlSource();
         switch (sqlSource) {
             case SQLSource.MSSQL: return "mssql_source";
             case SQLSource.Oracle: return "oracle_source";
+            default: throw new ProBaseError("SqlSourceInvalid", sqlSource + " is not a valid Sql Source value.");
+        }
+    }
+
+    private static GetSQLUpgradeFolder(): string {
+        var sqlSource = this.GetSqlSource();
+        switch (sqlSource) {
+            case SQLSource.MSSQL: return "ms";
+            case SQLSource.Oracle: return "ora";
             default: throw new ProBaseError("SqlSourceInvalid", sqlSource + " is not a valid Sql Source value.");
         }
     }

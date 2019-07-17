@@ -8,6 +8,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Support to view TraceLogs from within the extension
 - Added command to remove database name from SQL
 - Added option to Export Log as JSON and view imported logs
+- Support for Peek References
 
 ### Changed
 - The extension now activates as soon as Azure Data Studio opens (earlier would trigger on commands or on SQL documents)

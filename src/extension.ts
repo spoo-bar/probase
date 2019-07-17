@@ -13,6 +13,7 @@ import Helper from './utils/helper';
 import ProBaseSQLHelper from './features/proBaseSQLHelper';
 import ProBaseLogProvider from './features/proBaseLogProvider';
 import StatusBarHelper from './utils/statusBarHelper';
+import ProBaseReferenceProvider from './features/proBaseReferenceProvider';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -21,10 +22,13 @@ export function activate(context: vscode.ExtensionContext) {
     StatusBarHelper.createStatusBarItems();
 
     //Enables Go to Definition and Peek Definition
-    context.subscriptions.push(vscode.languages.registerDefinitionProvider({ language: "sql" }, new ProBaseDefinitionProvider()))
+    context.subscriptions.push(vscode.languages.registerDefinitionProvider({ language: "sql" }, new ProBaseDefinitionProvider()));
+
+    //Enables Peek Reference 
+    context.subscriptions.push(vscode.languages.registerReferenceProvider({ language: "sql" }, new ProBaseReferenceProvider()));
 
     //Enables intellisense on hover
-    context.subscriptions.push(vscode.languages.registerHoverProvider({ language: "sql" }, new ProBaseHoverProvider(context.globalState)))
+    context.subscriptions.push(vscode.languages.registerHoverProvider({ language: "sql" }, new ProBaseHoverProvider(context.globalState)));
 
     //Updates documentation
     context.subscriptions.push(vscode.commands.registerCommand('extension.updateDocumentation', () => {
@@ -35,16 +39,16 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.commands.registerCommand('extension.replaceSQLParameters', () => {
         ProBaseSQLHelper.replaceParameters();
     }));
+
+    //Cleans the database name from the SQL
+    context.subscriptions.push(vscode.commands.registerCommand('extension.cleanDatabaseName', () => {
+        ProBaseSQLHelper.cleanDatabaseName();
+    }));
     
     //Opens the SQL logs in a new view
     context.subscriptions.push(vscode.commands.registerCommand('extension.openSQLLogViewer', () => {
         var logProvider = new ProBaseLogProvider(context, Helper.GetSQLLogPath());
         ProBaseLogProvider.ShowLog(logProvider, true);
-    }));
-
-    //Cleans the database name from the SQL
-    context.subscriptions.push(vscode.commands.registerCommand('extension.cleanDatabaseName', () => {
-        ProBaseSQLHelper.cleanDatabaseName();
     }));
 
     //Imports and opens logs
