@@ -30,7 +30,7 @@
             logItem.setAttribute('data-date', message.Date);
             logItem.setAttribute('data-time', message.Time);
             logItem.setAttribute('data-user', message.User);
-            logItem.setAttribute('title', message.Date + " - " + message.Time + " - " + message.User);
+            logItem.setAttribute('title', "🧑 " + message.User + " 📅 " + message.Date + " ⌚ " + message.Time);
 
             var playIconLink = document.createElement('button');
             playIconLink.addEventListener("click", function (evt) {
