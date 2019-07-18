@@ -35,11 +35,9 @@ export default class ProBaseLogProvider {
                         break;
                     case 'pause-log':
                         clearInterval(this.LogInterval);
-                        vscode.window.showInformationMessage('Pausing the log');
                         break;
                     case 'resume-log':
                         this.LogInterval = setInterval(() => this.updateTraceLog(this.LogPanel), 250);
-                        vscode.window.showInformationMessage('Resuming the log');
                         break;
                     case 'export-log':
                         var logs = message.content;
