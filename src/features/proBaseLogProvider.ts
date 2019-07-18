@@ -75,6 +75,8 @@ export default class ProBaseLogProvider {
 
             JSON.parse(content).forEach((element: any, index: Number) => {
                 let log: Log = Object.assign(new Log(), element);
+                if(log.User === "")
+                    log.User = "Unknown user";
                 logPanel!.webview.postMessage(log);
             });
         });
