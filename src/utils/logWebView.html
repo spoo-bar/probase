@@ -122,6 +122,44 @@
             width: 100%;
         }
 
+        button {
+            border: none;
+            padding: 7px;
+            outline: none;
+            background: none;
+            cursor: pointer;
+        }
+
+        body.vscode-light button, 
+        body.vscode-light select {
+            color: black;
+        }
+
+        body.vscode-dark button, 
+        body.vscode-dark select, 
+        body.vscode-high-contrast button, 
+        body.vscode-high-contrast select  {
+            color: white;
+        }
+
+        span {
+            margin-right: 20px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        select {
+            background-color: transparent;
+            border: none;
+            padding: 3px;
+            min-width: 100px;
+            max-width: 130px;
+        }
+
+        select option {
+            background-color: var(--vscode-editor-background);
+        }
+
         body.vscode-light i.fa-play {
             color: green;
         }
@@ -146,86 +184,28 @@
             color: red;
         }
 
-        body.vscode-light i.fa-trash {
-            color: red;
-        }
-
-        body.vscode-dark i.fa-trash {
-            color: red;
-        }
-
+        body.vscode-light i.fa-trash,
+        body.vscode-dark i.fa-trash,
         body.vscode-high-contrast i.fa-trash {
             color: red;
         }
 
-        body.vscode-light i.fa-pause-circle {
-            color: var(--vscode-editor-foreground);
-        }
-
-        body.vscode-dark i.fa-pause-circle {
-            color: var(--vscode-editor-foreground);
-        }
-
+        body.vscode-light i.fa-pause-circle,
+        body.vscode-dark i.fa-pause-circle,
         body.vscode-high-contrast i.fa-pause-circle {
             color: var(--vscode-editor-foreground);
         }
 
-        body.vscode-light i.fa-play-circle {
-            color: var(--vscode-editor-foreground);
-        }
-
-        body.vscode-dark i.fa-play-circle {
-            color: var(--vscode-editor-foreground);
-        }
-
+        body.vscode-light i.fa-play-circle,
+        body.vscode-dark i.fa-play-circle,
         body.vscode-high-contrast i.fa-play-circle {
             color: var(--vscode-editor-foreground);
         }
 
-        body.vscode-light i.fa-share-square-o {
-            color: black;
-        }
-
-        body.vscode-dark i.fa-share-square-o {
-            color: white;
-        }
-
+        body.vscode-light i.fa-share-square-o,
+        body.vscode-dark i.fa-share-square-o,
         body.vscode-high-contrast i.fa-share-square-o {
-            color: red;
-        }
-
-        button {
-            border: none;
-            padding: 7px;
-            outline: none;
-            background: none;
-            cursor: pointer;
-        }
-
-        body.vscode-light button {
-            color: black;
-        }
-
-        body.vscode-dark button {
-            color: white;
-        }
-
-        body.vscode-high-contrast button {
-            color: white;
-        }
-
-        span {
-            margin-right: 20px;
-            cursor: pointer;
-            text-decoration: none;
-        }
-
-        select {
-            background-color: transparent;
-            border: none;
-            padding: 3px;
-            min-width: 100px;
-            max-width: 130px;
+            color: var(--vscode-editor-foreground);
         }
     </style>
 </head>
