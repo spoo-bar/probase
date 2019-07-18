@@ -9,7 +9,9 @@
     <script>
         var logEnabled = true;
         var autoScrollOn = true;
-        var isLiveLog = %%LIVELOG%%;
+        var isLiveLog = "%%LIVELOG%%";
+        var users = [];
+        var filterUser = "All";
 
         const vscode = acquireVsCodeApi();
 
@@ -27,7 +29,8 @@
             logItem.className += 'logItemDiv';
             logItem.setAttribute('data-date', message.Date);
             logItem.setAttribute('data-time', message.Time);
-            logItem.setAttribute('title', message.Date + " - " + message.Time);
+            logItem.setAttribute('data-user', message.User);
+            logItem.setAttribute('title', message.Date + " - " + message.Time + " - " + message.User);
 
             var playIconLink = document.createElement('button');
             playIconLink.addEventListener("click", function (evt) {
@@ -67,6 +70,20 @@
             var logMessage = document.createTextNode(message.Message);
             logItem.appendChild(logMessage);
             logItemsDiv.appendChild(logItem);
+            
+            if(filterUser !== "All" && filterUser !== message.User) {
+                logItem.style.display = "none";
+            }                
+
+            var userFilterDropdown = document.getElementById('user-filter');
+            if(!users.includes(message.User)) {
+                users.push(message.User);
+                var newUserOption = document.createElement('option');
+                newUserOption.value = message.User;
+                newUserOption.innerHTML = message.User;
+                userFilterDropdown.appendChild(newUserOption);
+            }
+            
 
             if(autoScrollOn)
                 window.scrollTo(0, document.body.scrollHeight);
@@ -202,6 +219,14 @@
             cursor: pointer;
             text-decoration: none;
         }
+
+        select {
+            background-color: transparent;
+            border: none;
+            padding: 3px;
+            min-width: 100px;
+            max-width: 130px;
+        }
     </style>
 </head>
 
@@ -211,7 +236,12 @@
             <button id="auto-scroll-btn" title="Auto Scroll"><i class="icon fa fa fa fa-angle-double-down"></i><span>Auto Scroll : On</span></button>
             <button id="log-pause-btn" title="Pause/Resume log"><i class="icon fa fa-pause-circle"></i><span>Pause</span></button>
             <button id="clear-btn" title="Clear Log"><i class="icon fa fa-trash"></i><span>Clear</span></button>
-            <button id="export-btn" title="Export Log" style="float: right;"><i class="icon fa fa-share-square-o"></i><span>Export Log</span></button>
+            <select id="user-filter" title="Filter User Logs">
+                <option>All</option>
+            </select>
+            <div style="float: right;">                
+                <button id="export-btn" title="Export Log"><i class="icon fa fa-share-square-o"></i><span>Export Log</span></button>
+            </div>
         </div>
         <div id="logItems" style="padding-top: 30px;">
         </div>
@@ -243,6 +273,12 @@
             var logItemsDiv = document.getElementById('logItems');
             logItemsDiv.innerHTML = '';
             postMessageToExtension('clear-log', '');
+            filterUser = "All"
+            users = ["All"];
+            var userFilterDropdown = document.getElementById('user-filter');
+            for(let i = userFilterDropdown.length - 1; i > 0; i--) {
+                userFilterDropdown.remove(i);
+            }
         };
         document.getElementById('export-btn').onclick = function () {
             var logItemsDiv = document.getElementById('logItems');
@@ -252,12 +288,26 @@
                     ID: logItem.id,
                     Message: logItem.textContent,
                     Date: logItem.getAttribute("data-date"),
-                    Time: logItem.getAttribute("data-time")
+                    Time: logItem.getAttribute("data-time"),
+                    User: logItem.getAttribute("data-user")
                 };
                 logs.push(log);
             }
             postMessageToExtension('export-log', logs);
         };
+        document.getElementById('user-filter').addEventListener("change", function() {
+            filterUser = document.getElementById('user-filter').value;
+            var logItemsDiv = document.getElementById('logItems');
+            for(const logItem of logItemsDiv.children) {
+                var queryUser = logItem.getAttribute('data-user');
+                if(filterUser !== "All" && filterUser !== queryUser) {
+                    logItem.style.display = "none";
+                }
+                else {
+                    logItem.style.display = "block";
+                }
+            }
+        });
         
         if (isLiveLog === false) {
             document.getElementById('auto-scroll-btn').disabled = true;

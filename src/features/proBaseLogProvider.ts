@@ -60,7 +60,7 @@ export default class ProBaseLogProvider {
             if (err)
                 throw new ProBaseError(err.name, err.message);
 
-            logProvider.LogPanel!.webview.html = isLiveLog ? content.replace('%%LIVELOG%%', 'true') : content.replace('%%LIVELOG%%', 'false');
+            logProvider.LogPanel!.webview.html = isLiveLog ? content.replace('"%%LIVELOG%%"', 'true') : content.replace('"%%LIVELOG%%"', 'false');
             logProvider.updateTraceLog(logProvider.LogPanel);
         });
     }
