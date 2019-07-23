@@ -227,6 +227,7 @@
         </div>
     </main>
     <script>
+        // Event handler to toggle auto scrolling when the button is clicked
         document.getElementById('auto-scroll-btn').onclick = function () {
             if (autoScrollOn) {
                 autoScrollOn = false;
@@ -237,6 +238,8 @@
                 document.getElementById('auto-scroll-btn').innerHTML = "<i class=\"icon fa fa-angle-double-down\"></i><span>Auto Scroll : On</span>";
             }
         };
+
+        // Event handler to pause logging / resume logging when the button is clicked
         document.getElementById('log-pause-btn').onclick = function () {
             if (logEnabled) {
                 logEnabled = false;
@@ -249,6 +252,8 @@
                 postMessageToExtension('resume-log', '');
             }
         };
+
+        // Event handler to clear the log and delete log contents when the button is clicked
         document.getElementById('clear-btn').onclick = function () {
             var logItemsDiv = document.getElementById('logItems');
             logItemsDiv.innerHTML = '';
@@ -260,6 +265,8 @@
                 userFilterDropdown.remove(i);
             }
         };
+
+        // Event handler to export the logs into a json object to save as a json file
         document.getElementById('export-btn').onclick = function () {
             var logItemsDiv = document.getElementById('logItems');
             var logs = [];
@@ -275,6 +282,8 @@
             }
             postMessageToExtension('export-log', logs);
         };
+
+        // Event handler to change the shown user logs when the user value in dropdown is changed
         document.getElementById('user-filter').addEventListener("change", function() {
             filterUser = document.getElementById('user-filter').value;
             var logItemsDiv = document.getElementById('logItems');
@@ -289,6 +298,7 @@
             }
         });
         
+        // Disable innecesasry buttons when log is not live
         if (isLiveLog === false) {
             document.getElementById('auto-scroll-btn').disabled = true;
             document.getElementById('auto-scroll-btn').style.opacity = "0.3";
